@@ -140,10 +140,9 @@ Desarrollado con ❤️ para la comunidad de desarrolladores de Python y NoSQL.
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-3.0%2B-green.svg)](https://flask.palletsprojects.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0%2B-brightgreen.svg)](https://www.mongodb.com/)
-[![CouchDB](https://img.shields.io/badge/CouchDB-3.3%2B-red.svg)](https://couchdb.apache.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Este repositorio es un **ejemplo educativo de nivel profesional** diseñado para enseñar conceptos fundamentales de desarrollo web con Python, **Clean Architecture** en Flask y **Persistencia Políglota** (*Polyglot Persistence*) combinando **MongoDB** y **CouchDB**.
+Este repositorio es un **ejemplo educativo de nivel profesional** diseñado para enseñar conceptos fundamentales de desarrollo web con Python, **Clean Architecture** en Flask y **Persistencia Políglota** (*Polyglot Persistence*) combinando **MongoDB**.
 
 ---
 
@@ -156,8 +155,7 @@ Al estudiar este repositorio aprenderás:
 3. **Modelado NoSQL (Documentos Embebidos)**: Manipulación de estructuras anidadas en MongoDB utilizando el operador `$push` de PyMongo en lugar de JOINs relacionales.
 4. **Persistencia Políglota**: Integración de dos motores NoSQL distintos para casos de uso específicos:
    - **MongoDB**: Publicación de artículos de blog y comentarios dinámicos.
-   - **CouchDB**: Gestión de padrón de personas consumiendo su API REST con autenticación HTTP Basic.
-
+  
 ---
 
 ## 📐 Arquitectura del Proyecto
@@ -171,11 +169,11 @@ mi-blog-mongo/
 └── app/                      # Paquete principal de la aplicación
     ├── __init__.py           # Application Factory (create_app)
     ├── config.py             # Carga centralizada de variables de entorno
-    ├── database.py           # Clientes e instancias de Mongo y CouchDB
+    ├── database.py           # Clientes e instancias de Mongo
     ├── routes/
     │   ├── __init__.py
     │   ├── blog.py           # Blueprint: Rutas del Blog (MongoDB)
-    │   └── personas.py       # Blueprint: API REST de Personas (CouchDB)
+    │  
     └── templates/
         ├── index.html        # Vista principal del blog y comentarios
         └── edit.html         # Vista para editar artículos existentes
@@ -189,7 +187,6 @@ mi-blog-mongo/
 
 - **Python 3.10** o superior instalado en tu sistema.
 - **MongoDB** ejecutándose localmente en el puerto `27017` (o mediante Docker).
-- *(Opcional)* **CouchDB** ejecutándose en el puerto `5984` si deseas probar la API de personas.
 
 ---
 
@@ -237,9 +234,6 @@ Edita el archivo `.env` según tus credenciales locales:
 MONGO_URI=mongodb://127.0.0.1:27017/
 MONGO_DB_NAME=blog
 
-COUCHDB_URL=http://127.0.0.1:5984
-COUCHDB_USER=admin
-COUCHDB_PASSWORD=secret
 ```
 
 #### 5. Ejecutar la aplicación
@@ -271,20 +265,6 @@ posts_collection.update_one(
 )
 ```
 
-### 2. Integración con CouchDB vía API REST
-
-CouchDB es una base de datos orientada a documentos que expone una interfaz HTTP/REST nativa. En `app/routes/personas.py` consumimos CouchDB directamente con la librería `requests` enviando autenticación HTTP Basic:
-
-```python
-response = requests.get(
-    f"{Config.COUCHDB_URL}/personal/_all_docs?include_docs=true",
-    headers=get_couch_headers(),
-    timeout=5
-)
-```
-
----
-
 ## 🛠️ Endpoints Disponibles
 
 | Método | Ruta | Descripción | Motor |
@@ -294,8 +274,6 @@ response = requests.get(
 | `GET/POST` | `/edit/<post_id>` | Formulario y actualización de un artículo | MongoDB |
 | `POST` | `/delete/<post_id>` | Elimina un artículo por su `ObjectId` | MongoDB |
 | `POST` | `/comment/<post_id>` | Agrega un comentario embebido al artículo | MongoDB |
-| `GET` | `/api/personas` | Obtiene el listado de personas en formato JSON | CouchDB |
-| `POST` | `/api/personas` | Crea un documento de persona vía API REST | CouchDB |
 
 ---
 
