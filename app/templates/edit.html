@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Artículo - Mi Blog Mongo</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 650px; margin: 40px auto; padding: 0 20px; color: #1a202c; background-color: #f8fafc; }
+        form { display: flex; flex-direction: column; gap: 14px; background: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        label { font-weight: 600; font-size: 0.9rem; color: #0f172a; }
+        input, textarea { padding: 10px; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; }
+        textarea { resize: vertical; min-height: 120px; }
+        .btn-submit { padding: 12px; background: #00ed64; color: #001e2b; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; font-size: 1rem; }
+        .btn-submit:hover { background: #00c853; }
+        .btn-cancel { display: inline-block; text-align: center; padding: 10px; background: #64748b; color: white; text-decoration: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h1>✏️ Editar Artículo</h1>
+    {% if post %}
+        <form action="{{ url_for('blog.edit_post', post_id=post._id) }}" method="POST">
+            <label for="titulo">Título del Post:</label>
+            <input type="text" id="titulo" name="titulo" value="{{ post.titulo }}" required>
+
+            <label for="autor">Nombre del Autor:</label>
+            <input type="text" id="autor" name="autor" value="{{ post.autor }}" required>
+
+            <label for="contenido">Contenido del Post:</label>
+            <textarea id="contenido" name="contenido" required>{{ post.contenido }}</textarea>
+
+            <button type="submit" class="btn-submit">Guardar Cambios</button>
+            <a href="{{ url_for('blog.index') }}" class="btn-cancel">Cancelar</a>
+        </form>
+    {% else %}
+        <p>El artículo solicitado no existe.</p>
+        <a href="{{ url_for('blog.index') }}" class="btn-cancel">Volver al Inicio</a>
+    {% endif %}
+</body>
+</html>

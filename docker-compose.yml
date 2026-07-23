@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Servicio Web: Aplicación Flask
+  web:
+    build: .
+    container_name: mi_blog_web
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/
+      - MONGO_DB_NAME=blog
+      - COUCHDB_URL=http://couchdb:5984
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=secret
+      - FLASK_DEBUG=True
+    depends_on:
+      - mongo
+      - couchdb
+
+  # Servicio de Base de Datos NoSQL 1: MongoDB (Para los artículos del Blog)
+  mongo:
+    image: mongo:6.0
+    container_name: mi_blog_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # Servicio de Base de Datos NoSQL 2: CouchDB (Para la API de Personas)
+  couchdb:
+    image: couchdb:3.3
+    container_name: mi_blog_couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=secret
+    volumes:
+      - couchdb_data:/opt/couchdb/data
+
+volumes:
+  mongo_data:
+    driver: local
+  couchdb_data:
+    driver: local

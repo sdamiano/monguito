@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Blog con MongoDB y Flask</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #1a202c; background-color: #f8fafc; }
+        h1, h2, h3 { color: #0f172a; }
+        .card { background: white; padding: 24px; margin-bottom: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .post { border-left: 5px solid #00ed64; }
+        .meta { font-size: 0.875rem; color: #64748b; margin-bottom: 12px; }
+        .content { font-size: 1rem; line-height: 1.6; color: #334155; white-space: pre-line; margin-bottom: 16px; }
+        form.create-form { display: flex; flex-direction: column; gap: 12px; }
+        input, textarea { padding: 10px; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; }
+        textarea { resize: vertical; min-height: 90px; }
+        button.btn-save { padding: 12px; background: #00ed64; color: #001e2b; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; font-size: 1rem; }
+        button.btn-save:hover { background: #00c853; }
+        
+        .actions { margin-top: 16px; display: flex; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        .btn-edit { padding: 6px 14px; background: #2563eb; color: white; text-decoration: none; border-radius: 4px; font-size: 0.875rem; font-weight: 600; }
+        .btn-delete { padding: 6px 14px; background: #ef4444; color: white; border: none; border-radius: 4px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+        
+        /* Sección de Comentarios Embebidos */
+        .comments-section { margin-top: 20px; background: #f8fafc; padding: 16px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .comments-section h4 { margin-top: 0; margin-bottom: 12px; color: #1e293b; font-size: 0.95rem; }
+        .comment-item { background: white; padding: 10px 14px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #edf2f7; font-size: 0.9rem; }
+        .comment-meta { font-size: 0.8rem; color: #64748b; font-weight: bold; margin-bottom: 4px; }
+        .comment-form { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+        .comment-form input { padding: 6px 10px; font-size: 0.875rem; }
+        .btn-comment { align-self: flex-end; padding: 6px 12px; background: #0f172a; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>✍️ Publicar en el Blog</h1>
+    <div class="card">
+        <form action="{{ url_for('blog.add_post') }}" method="POST" class="create-form">
+            <input type="text" name="titulo" placeholder="Título de la publicación" required>
+            <input type="text" name="autor" placeholder="Nombre del autor" required>
+            <textarea name="contenido" placeholder="Escribí el contenido de tu publicación..." required></textarea>
+            <button type="submit" class="btn-save">Publicar en MongoDB</button>
+        </form>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+
+    <h2>📚 Artículos Publicados</h2>
+    {% for post in posts %}
+        <div class="card post">
+            <h3>{{ post.titulo }}</h3>
+            <div class="meta">
+                <span>Por <strong>{{ post.autor }}</strong></span> • 
+                <span>{{ post.fecha_creacion }}</span>
+            </div>
+            <div class="content">{{ post.contenido }}</div>
+
+            <!-- SECCIÓN NO SQL: Comentarios Embebidos (Embedded Documents) -->
+            <div class="comments-section">
+                <h4>💬 Comentarios ({{ post.comentarios | length }})</h4>
+                {% for c in post.comentarios %}
+                    <div class="comment-item">
+                        <div class="comment-meta">{{ c.autor }} • <small>{{ c.fecha }}</small></div>
+                        <div>{{ c.texto }}</div>
+                    </div>
+                {% else %}
+                    <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">Sin comentarios aún. ¡Sé el primero en comentar!</p>
+                {% endfor %}
+
+                <!-- Formulario para agregar comentario vía $push en MongoDB -->
+                <form action="{{ url_for('blog.add_comment', post_id=post._id) }}" method="POST" class="comment-form">
+                    <input type="text" name="autor_comentario" placeholder="Tu nombre" required>
+                    <input type="text" name="texto_comentario" placeholder="Escribí un comentario..." required>
+                    <button type="submit" class="btn-comment">Comentar</button>
+                </form>
+            </div>
+
+            <div class="actions">
+                <a href="{{ url_for('blog.edit_post', post_id=post._id) }}" class="btn-edit">Editar Post</a>
+                <form action="{{ url_for('blog.delete_post', post_id=post._id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn-delete" onclick="return confirm('¿Estás seguro de eliminar este artículo?');">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <p style="color: #64748b;">No hay artículos todavía. ¡Crea el primero!</p>
+    {% endfor %}
+</body>
+</html>
