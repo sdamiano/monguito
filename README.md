@@ -5,7 +5,7 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0%2B-brightgreen.svg)](https://www.mongodb.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Este repositorio es un **ejemplo educativo de nivel profesional** diseñado para enseñar conceptos fundamentales de desarrollo web con Python, **Clean Architecture** en Flask y **Persistencia con MongoDB**.
+Este repositorio es un **ejemplo educativo** diseñado para enseñar conceptos fundamentales de desarrollo web con Python, **Clean Architecture** en Flask y **Persistencia con MongoDB**.
 
 ---
 
