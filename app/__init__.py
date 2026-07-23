@@ -9,9 +9,7 @@ def create_app(config_class=Config):
 
     # Registro de Blueprints
     from app.routes.blog import blog_bp
-    from app.routes.personas import personas_bp
 
     app.register_blueprint(blog_bp)
-    app.register_blueprint(personas_bp)
 
     return app
